@@ -157,46 +157,41 @@ namespace ASTImpl
 
             double Evaluate(std::function<double(const Position &)> args) const override
             {
+                double lhs = lhs_->Evaluate(args);
+                double rhs = rhs_->Evaluate(args);
+
+                auto result = [](double value)
+                {
+                    if (std::isfinite(value))
+                    {
+                        return value;
+                    }
+                    else
+                    {
+                        throw FormulaError(FormulaError::Category::Arithmetic);
+                    }
+                };
+
                 switch (type_)
                 {
                 case Add:
-                    if (std::isfinite(lhs_->Evaluate(args) + rhs_->Evaluate(args)))
-                    {
-                        return lhs_->Evaluate(args) + rhs_->Evaluate(args);
-                    }
-                    else
-                    {
-                        throw FormulaError(FormulaError::Category::Arithmetic);
-                    }
+                {
+                    return result(lhs + rhs);
+                }
                 case Subtract:
-                    if (std::isfinite(lhs_->Evaluate(args) - rhs_->Evaluate(args)))
-                    {
-                        return lhs_->Evaluate(args) - rhs_->Evaluate(args);
-                    }
-                    else
-                    {
-                        throw FormulaError(FormulaError::Category::Arithmetic);
-                    }
+                {
+                    return result(lhs - rhs);
+                }
                 case Multiply:
-                    if (std::isfinite(lhs_->Evaluate(args) * rhs_->Evaluate(args)))
-                    {
-                        return lhs_->Evaluate(args) * rhs_->Evaluate(args);
-                    }
-                    else
-                    {
-                        throw FormulaError(FormulaError::Category::Arithmetic);
-                    }
+                {
+                    return result(lhs * rhs);
+                }
                 case Divide:
-                    if (std::isfinite(lhs_->Evaluate(args) / rhs_->Evaluate(args)))
-                    {
-                        return lhs_->Evaluate(args) / rhs_->Evaluate(args);
-                    }
-                    else
-                    {
-                        throw FormulaError(FormulaError::Category::Arithmetic);
-                    }
+                {
+                    return result(lhs / rhs);
+                }
                 default:
-                    return {};
+                    throw FormulaError(FormulaError::Category::Arithmetic);
                 }
             }
 
@@ -241,14 +236,13 @@ namespace ASTImpl
 
             double Evaluate(std::function<double(const Position &)> args) const override
             {
-                switch (type_)
+                if (type_ == UnaryPlus)
                 {
-                case UnaryPlus:
                     return operand_->Evaluate(args);
-                case UnaryMinus:
+                }
+                else
+                {
                     return -operand_->Evaluate(args);
-                default:
-                    return {};
                 }
             }
 

@@ -32,28 +32,7 @@ void Sheet::SetCell(Position pos, std::string text)
 
 const CellInterface *Sheet::GetCell(Position pos) const
 {
-    if (pos.IsValid())
-    {
-        if (pos.row < printable_size_.rows && pos.col < printable_size_.cols)
-        {
-            if (sheet_.find(pos) != sheet_.end())
-            {
-                return sheet_.at(pos).get();
-            }
-            else
-            {
-                return nullptr;
-            }
-        }
-        else
-        {
-            return nullptr;
-        }
-    }
-    else
-    {
-        throw InvalidPositionException("Invalid get position");
-    }
+    return const_cast<Sheet*>(this)->GetCell(pos);
 }
 
 CellInterface *Sheet::GetCell(Position pos)
@@ -84,21 +63,7 @@ CellInterface *Sheet::GetCell(Position pos)
 
 const Cell *Sheet::GetConcreteCell(Position pos) const
 {
-    if (pos.IsValid())
-    {
-            if (sheet_.find(pos) != sheet_.end())
-            {
-                return sheet_.at(pos).get();
-            }
-            else
-            {
-                return nullptr;
-            }
-    }
-    else
-    {
-        throw InvalidPositionException("Invalid get position");
-    }
+    return const_cast<Sheet*>(this)->GetConcreteCell(pos);
 }
 
 Cell *Sheet::GetConcreteCell(Position pos)
